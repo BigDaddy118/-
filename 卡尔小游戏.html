@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOTA2祈求者技能练习器 - 修改版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2a3c7a);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 900px;
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        h1 {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #ffcc00;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+
+        .subtitle {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #aaa;
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .elements-section,
+        .practice-section {
+            background-color: rgba(30, 40, 100, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #ffcc00;
+            text-align: center;
+        }
+
+        .element-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .element-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .element-btn.q {
+            background: linear-gradient(135deg, #4a9fe9, #2a5c8a);
+            box-shadow: 0 0 10px rgba(74, 159, 233, 0.5);
+        }
+
+        .element-btn.w {
+            background: linear-gradient(135deg, #9b59b6, #6c3483);
+            box-shadow: 0 0 10px rgba(155, 89, 182, 0.5);
+        }
+
+        .element-btn.e {
+            background: linear-gradient(135deg, #e74c3c, #922b21);
+            box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+        }
+
+        .element-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .element-btn:active {
+            transform: scale(0.95);
+        }
+
+        .element-display {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .element-slot {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        .element-slot.q {
+            background-color: rgba(74, 159, 233, 0.3);
+            color: #4a9fe9;
+            box-shadow: 0 0 10px rgba(74, 159, 233, 0.5);
+        }
+
+        .element-slot.w {
+            background-color: rgba(155, 89, 182, 0.3);
+            color: #9b59b6;
+            box-shadow: 0 0 10px rgba(155, 89, 182, 0.5);
+        }
+
+        .element-slot.e {
+            background-color: rgba(231, 76, 60, 0.3);
+            color: #e74c3c;
+            box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .action-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .action-btn.fuse {
+            background: linear-gradient(135deg, #ffcc00, #ff9900);
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+
+        .action-btn.clear {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            box-shadow: 0 0 10px rgba(149, 165, 166, 0.5);
+        }
+
+        .action-btn.practice {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .skills-section {
+            background-color: rgba(30, 40, 100, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .skill-slots {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .skill-slot {
+            width: 150px;
+            height: 120px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+
+        .skill-slot.active {
+            background-color: rgba(255, 204, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+        }
+
+        .slot-label {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #ffcc00;
+        }
+
+        .skill-name {
+            font-size: 1.1rem;
+            text-align: center;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cast-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cast-btn {
+            width: 150px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .cast-btn.d {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+        }
+
+        .cast-btn.f {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+        }
+
+        .cast-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .cast-btn:active {
+            transform: translateY(0);
+        }
+
+        .feedback-section {
+            grid-column: 1 / -1;
+            background-color: rgba(30, 40, 100, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .feedback-section.success {
+            background-color: rgba(46, 204, 113, 0.3);
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.5);
+        }
+
+        .feedback-section.error {
+            background-color: rgba(231, 76, 60, 0.3);
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.5);
+        }
+
+        .skill-queue {
+            grid-column: 1 / -1;
+            background-color: rgba(30, 40, 100, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            display: none;
+        }
+
+        .queue-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #ffcc00;
+            text-align: center;
+        }
+
+        .queue-display {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .queue-item {
+            width: 120px;
+            height: 100px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            transition: all 0.3s;
+        }
+
+        .queue-item.current {
+            background-color: rgba(255, 204, 0, 0.3);
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+            transform: scale(1.05);
+        }
+
+        .queue-item .skill-name {
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        .practice-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .skill-reference {
+            grid-column: 1 / -1;
+            background-color: rgba(30, 40, 100, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .skill-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .skill-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .skill-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .skill-elements {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .skill-element {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .skill-element.q {
+            background-color: #4a9fe9;
+        }
+
+        .skill-element.w {
+            background-color: #9b59b6;
+        }
+
+        .skill-element.e {
+            background-color: #e74c3c;
+        }
+
+        .instructions {
+            grid-column: 1 / -1;
+            background-color: rgba(30, 40, 100, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        .instructions h3 {
+            color: #ffcc00;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            list-style-type: none;
+            padding-left: 10px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .instructions li:before {
+            content: "•";
+            color: #ffcc00;
+            position: absolute;
+            left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .skill-slots {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+
+            .cast-buttons {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+
+            .cast-btn {
+                width: 100%;
+            }
+
+            .queue-display {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .practice-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>DOTA2 祈求者技能练习器</h1>
+        <p class="subtitle">练习元素组合与技能施放，提升游戏中的反应速度</p>
+
+        <div class="game-area">
+            <div class="elements-section">
+                <h2 class="section-title">元素选择</h2>
+                <div class="element-buttons">
+                    <button class="element-btn q" data-element="Q">
+                        <span>Q</span>
+                        <small>冰</small>
+                    </button>
+                    <button class="element-btn w" data-element="W">
+                        <span>W</span>
+                        <small>雷</small>
+                    </button>
+                    <button class="element-btn e" data-element="E">
+                        <span>E</span>
+                        <small>火</small>
+                    </button>
+                </div>
+
+                <div class="element-display">
+                    <div class="element-slot" id="slot1"></div>
+                    <div class="element-slot" id="slot2"></div>
+                    <div class="element-slot" id="slot3"></div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-btn fuse" id="fuse-btn">融合技能 (R)</button>
+                    <button class="action-btn clear" id="clear-btn">清除序列 (C)</button>
+                </div>
+            </div>
+
+            <div class="practice-section">
+                <h2 class="section-title">练习模式</h2>
+                <button class="action-btn practice" id="practice-btn" style="width: 100%; margin-bottom: 15px;">
+                    开始练习模式
+                </button>
+                <p style="text-align: center; color: #aaa; font-size: 0.9rem;">
+                    在练习模式中，系统会生成技能队列，请按顺序施放正确的技能
+                </p>
+            </div>
+        </div>
+
+        <div class="skills-section">
+            <h2 class="section-title">技能槽</h2>
+            <div class="skill-slots">
+                <div class="skill-slot" id="skill-slot-d">
+                    <div class="slot-label">D 槽</div>
+                    <div class="skill-name" id="skill-name-d">空</div>
+                </div>
+                <div class="skill-slot" id="skill-slot-f">
+                    <div class="slot-label">F 槽</div>
+                    <div class="skill-name" id="skill-name-f">空</div>
+                </div>
+            </div>
+
+            <div class="cast-buttons">
+                <button class="cast-btn d" id="cast-d">施放 D 技能</button>
+                <button class="cast-btn f" id="cast-f">施放 F 技能</button>
+            </div>
+        </div>
+
+        <div class="skill-queue" id="skill-queue">
+            <h2 class="queue-title">技能队列</h2>
+            <div class="queue-display" id="queue-display">
+                <!-- 队列将通过JavaScript动态生成 -->
+            </div>
+            <div class="practice-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="correct-count">0</div>
+                    <div class="stat-label">正确次数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="wrong-count">0</div>
+                    <div class="stat-label">错误次数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="combo-count">0</div>
+                    <div class="stat-label">连击数</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feedback-section" id="feedback">
+            按 Q, W, E 选择元素，按 R 融合技能
+        </div>
+
+        <div class="skill-reference">
+            <h2 class="section-title">技能参考</h2>
+            <div class="skill-grid" id="skill-grid">
+                <!-- 技能列表将通过JavaScript动态生成 -->
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>操作说明</h3>
+            <ul>
+                <li><strong>Q, W, E</strong> - 选择元素（冰、雷、火）</li>
+                <li><strong>R</strong> - 融合当前元素为技能</li>
+                <li><strong>D, F</strong> - 施放对应技能槽中的技能</li>
+                <li><strong>C</strong> - 清除当前元素序列</li>
+                <li><strong>X</strong> - 清除所有技能槽</li>
+                <li><strong>P</strong> - 开始/停止练习模式</li>
+            </ul>
+            <h3 style="margin-top: 15px;">练习模式说明</h3>
+            <ul>
+                <li>系统会生成技能队列，请按顺序融合并施放正确的技能</li>
+                <li>正确施放队列中的第一个技能后，该技能会从队列中移除</li>
+                <li>系统会自动添加新的随机技能到队尾</li>
+                <li>连续正确施放技能会增加连击数</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 技能数据库映射 - 基于元素计数
+        const skillDatabase = {
+            "3,0,0": {
+                name: "急速冷却",
+                description: "使目标受到伤害时会眩晕并受到额外伤害",
+                elements: ["Q", "Q", "Q"]
+            },
+            "2,1,0": {
+                name: "幽灵漫步",
+                description: "使自己隐身并获得移动速度加成，靠近敌人会使其减速",
+                elements: ["Q", "Q", "W"]
+            },
+            "2,0,1": {
+                name: "寒冰之墙",
+                description: "创造一道冰墙，穿过墙的敌人会受到伤害并被减速",
+                elements: ["Q", "Q", "E"]
+            },
+            "0,3,0": {
+                name: "电磁脉冲",
+                description: "在目标区域制造一个延迟爆炸的电磁脉冲，消耗敌人魔法并造成伤害",
+                elements: ["W", "W", "W"]
+            },
+            "1,2,0": {
+                name: "强袭飓风",
+                description: "释放一股旋风，将敌人卷至空中并落地时造成伤害",
+                elements: ["Q", "W", "W"]
+            },
+            "0,2,1": {
+                name: "灵动迅捷",
+                description: "提升攻击速度和攻击力",
+                elements: ["W", "W", "E"]
+            },
+            "0,0,3": {
+                name: "阳炎冲击",
+                description: "在目标区域召唤一道太阳光束，造成纯粹伤害",
+                elements: ["E", "E", "E"]
+            },
+            "1,0,2": {
+                name: "熔炉精灵",
+                description: "召唤一个熔炉精灵，具有攻击力和护甲，攻击会降低敌人护甲",
+                elements: ["Q", "E", "E"]
+            },
+            "0,1,2": {
+                name: "混沌陨石",
+                description: "召唤一颗陨石向前滚动，对路径上的敌人造成伤害",
+                elements: ["W", "E", "E"]
+            },
+            "1,1,1": {
+                name: "超震声波",
+                description: "释放一道强大的声波，击退敌人并使其无法攻击",
+                elements: ["Q", "W", "E"]
+            }
+        };
+
+        // 游戏状态
+        const gameState = {
+            currentElements: [],
+            skillSlotD: null,
+            skillSlotF: null,
+            practiceMode: false,
+            skillQueue: [],
+            correctCount: 0,
+            wrongCount: 0,
+            comboCount: 0
+        };
+
+        // DOM元素
+        const elementSlots = [
+            document.getElementById('slot1'),
+            document.getElementById('slot2'),
+            document.getElementById('slot3')
+        ];
+
+        const skillNameD = document.getElementById('skill-name-d');
+        const skillNameF = document.getElementById('skill-name-f');
+        const skillSlotD = document.getElementById('skill-slot-d');
+        const skillSlotF = document.getElementById('skill-slot-f');
+        const feedback = document.getElementById('feedback');
+        const skillGrid = document.getElementById('skill-grid');
+        const skillQueue = document.getElementById('skill-queue');
+        const queueDisplay = document.getElementById('queue-display');
+        const practiceBtn = document.getElementById('practice-btn');
+        const correctCount = document.getElementById('correct-count');
+        const wrongCount = document.getElementById('wrong-count');
+        const comboCount = document.getElementById('combo-count');
+
+        // 初始化技能参考列表
+        function initSkillGrid() {
+            for (const key in skillDatabase) {
+                const skill = skillDatabase[key];
+                const skillItem = document.createElement('div');
+                skillItem.className = 'skill-item';
+
+                const elementsDiv = document.createElement('div');
+                elementsDiv.className = 'skill-elements';
+
+                skill.elements.forEach(element => {
+                    const elementSpan = document.createElement('div');
+                    elementSpan.className = `skill-element ${element.toLowerCase()}`;
+                    elementSpan.textContent = element;
+                    elementsDiv.appendChild(elementSpan);
+                });
+
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'skill-name';
+                nameDiv.textContent = skill.name;
+
+                const descDiv = document.createElement('div');
+                descDiv.className = 'skill-desc';
+                descDiv.textContent = skill.description;
+                descDiv.style.fontSize = '0.8rem';
+                descDiv.style.marginTop = '5px';
+                descDiv.style.textAlign = 'center';
+                descDiv.style.color = '#ccc';
+
+                skillItem.appendChild(elementsDiv);
+                skillItem.appendChild(nameDiv);
+                skillItem.appendChild(descDiv);
+
+                skillGrid.appendChild(skillItem);
+            }
+        }
+
+        // 更新元素显示
+        function updateElementDisplay() {
+            for (let i = 0; i < 3; i++) {
+                const element = gameState.currentElements[i];
+                const slot = elementSlots[i];
+
+                if (element) {
+                    slot.textContent = element;
+                    slot.className = `element-slot ${element.toLowerCase()}`;
+                } else {
+                    slot.textContent = '';
+                    slot.className = 'element-slot';
+                }
+            }
+        }
+
+        // 更新技能槽显示
+        function updateSkillSlots() {
+            skillNameD.textContent = gameState.skillSlotD || "空";
+            skillNameF.textContent = gameState.skillSlotF || "空";
+
+            if (gameState.skillSlotD) {
+                skillSlotD.classList.add('active');
+            } else {
+                skillSlotD.classList.remove('active');
+            }
+
+            if (gameState.skillSlotF) {
+                skillSlotF.classList.add('active');
+            } else {
+                skillSlotF.classList.remove('active');
+            }
+        }
+
+        // 显示反馈信息
+        function showFeedback(message, type = 'info') {
+            feedback.textContent = message;
+            feedback.className = 'feedback-section';
+
+            if (type === 'success') {
+                feedback.classList.add('success');
+            } else if (type === 'error') {
+                feedback.classList.add('error');
+            }
+        }
+
+        // 添加元素
+        function addElement(element) {
+            // 如果已有3个元素，移除第一个
+            if (gameState.currentElements.length >= 3) {
+                gameState.currentElements.shift();
+            }
+
+            // 添加新元素到末尾
+            gameState.currentElements.push(element);
+
+            // 更新界面显示
+            updateElementDisplay();
+
+            // 显示当前元素序列
+            if (gameState.practiceMode) {
+                showFeedback(`当前元素: ${gameState.currentElements.join('')} | 目标: ${gameState.skillQueue[0]?.name || '无'}`);
+            } else {
+                showFeedback(`当前元素: ${gameState.currentElements.join('')}`);
+            }
+        }
+
+        // 融合技能
+        function fuseSkill() {
+            // 检查是否有3个元素，如果没有，直接返回
+            if (gameState.currentElements.length !== 3) {
+                return;
+            }
+
+            // 统计Q/W/E元素的个数
+            let qCount = 0, wCount = 0, eCount = 0;
+
+            for (const element of gameState.currentElements) {
+                if (element === 'Q') qCount++;
+                else if (element === 'W') wCount++;
+                else if (element === 'E') eCount++;
+            }
+
+            // 创建计数键
+            const countKey = `${qCount},${wCount},${eCount}`;
+
+            // 查找对应技能
+            const skill = skillDatabase[countKey];
+
+            if (!skill) {
+                // 无效元素组合，清空元素序列但不做其他处理
+                gameState.currentElements = [];
+                updateElementDisplay();
+                return;
+            }
+
+            // 将技能放入技能槽（遵循替换策略）
+            if (gameState.skillSlotD === null && gameState.skillSlotF === null) {
+                // 两个槽都为空，放入D槽
+                gameState.skillSlotD = skill.name;
+            } else if (gameState.skillSlotD !== null && gameState.skillSlotF === null) {
+                // D槽有技能，F槽为空，放入F槽
+                gameState.skillSlotF = skill.name;
+            } else if (gameState.skillSlotD === null && gameState.skillSlotF !== null) {
+                // D槽为空，F槽有技能，放入D槽
+                gameState.skillSlotD = skill.name;
+            } else {
+                // 两个槽都有技能，将F槽技能移到D槽，新技能放入F槽
+                gameState.skillSlotD = gameState.skillSlotF;
+                gameState.skillSlotF = skill.name;
+            }
+
+            // 清空元素序列
+            gameState.currentElements = [];
+
+            // 更新界面
+            updateSkillSlots();
+            updateElementDisplay();
+
+            // 显示融合成功反馈
+            showFeedback(`成功融合: ${skill.name}`, 'success');
+        }
+
+        // 施放技能
+        function castSkill(slot) {
+            let skillName;
+
+            if (slot === 'D') {
+                // 检查D槽是否有技能，如果没有，直接返回
+                if (!gameState.skillSlotD) return;
+
+                skillName = gameState.skillSlotD;
+            } else if (slot === 'F') {
+                // 检查F槽是否有技能，如果没有，直接返回
+                if (!gameState.skillSlotF) return;
+
+                skillName = gameState.skillSlotF;
+            } else {
+                return;
+            }
+
+            // 在练习模式下检查是否正确
+            if (gameState.practiceMode && gameState.skillQueue.length > 0) {
+                const currentTarget = gameState.skillQueue[0];
+                if (skillName === currentTarget.name) {
+                    // 正确施放
+                    gameState.correctCount++;
+                    gameState.comboCount++;
+                    updatePracticeStats();
+
+                    // 移除队列第一个技能，添加新技能
+                    gameState.skillQueue.shift();
+                    addRandomSkillToQueue();
+                    updateQueueDisplay();
+
+                    showFeedback(`正确施放: ${skillName} - 连击: ${gameState.comboCount}`, 'success');
+                } else {
+                    // 错误施放
+                    gameState.wrongCount++;
+                    gameState.comboCount = 0;
+                    updatePracticeStats();
+
+                    showFeedback(`错误! 应该是 ${currentTarget.name}，不是 ${skillName}`, 'error');
+                }
+            } else {
+                // 非练习模式下的施放
+                showFeedback(`施放: ${skillName}`, 'success');
+            }
+        }
+
+        // 清除元素序列
+        function clearElements() {
+            gameState.currentElements = [];
+            updateElementDisplay();
+            showFeedback("元素序列已清除");
+        }
+
+        // 清除技能槽
+        function clearSkills() {
+            gameState.skillSlotD = null;
+            gameState.skillSlotF = null;
+            updateSkillSlots();
+            showFeedback("技能槽已清除");
+        }
+
+        // 练习模式相关函数
+        function togglePracticeMode() {
+            gameState.practiceMode = !gameState.practiceMode;
+
+            if (gameState.practiceMode) {
+                // 开始练习模式
+                practiceBtn.textContent = "停止练习模式";
+                skillQueue.style.display = 'block';
+
+                // 初始化队列
+                gameState.skillQueue = [];
+                gameState.correctCount = 0;
+                gameState.wrongCount = 0;
+                gameState.comboCount = 0;
+
+                // 添加初始技能到队列
+                for (let i = 0; i < 3; i++) {
+                    addRandomSkillToQueue();
+                }
+
+                updateQueueDisplay();
+                updatePracticeStats();
+
+                showFeedback("练习模式已开始! 请按顺序施放队列中的技能", 'success');
+            } else {
+                // 停止练习模式
+                practiceBtn.textContent = "开始练习模式";
+                skillQueue.style.display = 'none';
+
+                showFeedback("练习模式已停止");
+            }
+        }
+
+        // 添加随机技能到队列
+        function addRandomSkillToQueue() {
+            const skillKeys = Object.keys(skillDatabase);
+            const randomKey = skillKeys[Math.floor(Math.random() * skillKeys.length)];
+            gameState.skillQueue.push(skillDatabase[randomKey]);
+        }
+
+        // 更新队列显示
+        function updateQueueDisplay() {
+            queueDisplay.innerHTML = '';
+
+            for (let i = 0; i < gameState.skillQueue.length; i++) {
+                const skill = gameState.skillQueue[i];
+                const queueItem = document.createElement('div');
+                queueItem.className = i === 0 ? 'queue-item current' : 'queue-item';
+
+                const elementsDiv = document.createElement('div');
+                elementsDiv.className = 'skill-elements';
+
+                skill.elements.forEach(element => {
+                    const elementSpan = document.createElement('div');
+                    elementSpan.className = `skill-element ${element.toLowerCase()}`;
+                    elementSpan.textContent = element;
+                    elementsDiv.appendChild(elementSpan);
+                });
+
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'skill-name';
+                nameDiv.textContent = skill.name;
+
+                queueItem.appendChild(elementsDiv);
+                queueItem.appendChild(nameDiv);
+
+                queueDisplay.appendChild(queueItem);
+            }
+        }
+
+        // 更新练习统计数据
+        function updatePracticeStats() {
+            correctCount.textContent = gameState.correctCount;
+            wrongCount.textContent = gameState.wrongCount;
+            comboCount.textContent = gameState.comboCount;
+        }
+
+        // 键盘事件监听
+        document.addEventListener('keydown', function (event) {
+            const key = event.key.toUpperCase();
+
+            switch (key) {
+                case 'Q':
+                case 'W':
+                case 'E':
+                    addElement(key);
+                    break;
+                case 'R':
+                    fuseSkill();
+                    break;
+                case 'D':
+                    castSkill('D');
+                    break;
+                case 'F':
+                    castSkill('F');
+                    break;
+                case 'C':
+                    clearElements();
+                    break;
+                case 'X':
+                    clearSkills();
+                    break;
+                case 'P':
+                    togglePracticeMode();
+                    break;
+            }
+        });
+
+        // 按钮事件监听
+        document.querySelectorAll('.element-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const element = button.getAttribute('data-element');
+                addElement(element);
+            });
+        });
+
+        document.getElementById('fuse-btn').addEventListener('click', fuseSkill);
+        document.getElementById('clear-btn').addEventListener('click', clearElements);
+        document.getElementById('cast-d').addEventListener('click', () => castSkill('D'));
+        document.getElementById('cast-f').addEventListener('click', () => castSkill('F'));
+        practiceBtn.addEventListener('click', togglePracticeMode);
+
+        // 初始化
+        function init() {
+            updateElementDisplay();
+            updateSkillSlots();
+            initSkillGrid();
+            showFeedback("按 Q, W, E 选择元素，按 R 融合技能");
+        }
+
+        // 启动应用
+        init();
+    </script>
+</body>
+
+</html>
